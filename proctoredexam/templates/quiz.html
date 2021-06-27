@@ -1,0 +1,131 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<script type="text/javascript"> var answers = "{{answers}}";</script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<style>
+.topcorner{
+   position:fixed;
+   top:55px;
+   right:-75px;
+   height:350px;
+   width:350px;
+ }
+ video, canvas {
+    transform: scale(-1, 1); /*For Firefox (& IE) */
+    -webkit-transform: scale(-1, 1); /*for Chrome & Opera (& Safari) */
+}
+</style>
+<div class="topcorner">
+    <div class="row">
+        <div class="col-lg-8  offset-lg-2">
+            <video id="myVideo" autoplay></video>
+        </div>
+    </div>
+</div>
+<div id="time">{{duration}}</div>
+<table>
+<tr>
+  <td id='queid'>Question No.</td>
+	<td id='mark'>Marks: {{ marks }}</td>
+</tr>
+</table>
+<pre class="prettyprint" id="pretest">
+  <p id="que" style="">{{ q }}</p>
+</pre>
+
+<table id="options">
+	<tr>
+		<td id='a'>𝐀. {{ a }}</td>
+		<td id='b'>𝐁. {{ b }}</td>
+	</tr>
+	<tr>
+		<td id='c'>𝐂. {{ c }}</td>
+		<td id='d'>𝐃. {{ d }}</td>
+	</tr>
+</table>
+    
+<div id="overlay">
+  <div class="container" id="question-list">
+  </div>
+</div>
+<div id="submit-overlay"></div>
+
+<footer class="page-footer fixed-bottom pt-4">
+  <div class="container">
+
+    <ul class="list-unstyled list-inline text-center py-2">
+      <li class="list-inline-item">
+        <button class="btn btn-primary btn-rounded" id="questions">Questions</button>
+        <input type="button" value="Prev" id="prev" class="btn btn-primary btn-rounded">
+        <input type="button" value="Next" id="next" class="btn btn-primary btn-rounded">
+        <input type="button" value="Submit" id="submit" class="btn btn-success btn-rounded">
+        <button class="btn btn-primary btn-rounded" id="bookmark">Bookmark</button>
+        <div class="btn btn-success" id="finish">Finish Test</div>
+      </li>
+    </ul>
+  </div>
+</footer>
+<script>
+
+    let v = document.getElementById("myVideo");
+
+    //create a canvas to grab an image for upload
+    let imageCanvas = document.createElement('canvas');
+    let imageCtx = imageCanvas.getContext("2d");
+
+    //Add file blob to a form and post
+    function postFile(file) {
+        let formdata = new FormData();
+        formdata.append("image", file);
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/image', true);
+        xhr.onload = function () {
+            if (this.status === 200)
+                console.log(this.response);
+            else
+                console.error(xhr);
+        };
+        xhr.send(formdata);
+    }
+
+    //Get the image from the canvas
+    function sendImagefromCanvas() {
+
+        //Make sure the canvas is set to the current video size
+        imageCanvas.width = v.videoWidth;
+        imageCanvas.height = v.videoHeight;
+
+        imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight);
+
+        //Convert the canvas to blob and post the file
+        imageCanvas.toBlob(postFile, 'image/jpeg');
+    }
+
+    //Take a picture on click
+    v.onclick = function() {
+        console.log('click');
+        sendImagefromCanvas();
+    };
+    function clickButton() {
+            v.click();
+    }
+    window.onload = function () {
+
+        //Get camera video
+        navigator.mediaDevices.getUserMedia({video: {width: 200, height: 200}, audio: false})
+            .then(stream => {
+                v.srcObject = stream;
+            })
+            .catch(err => {
+                console.log('navigator.getUserMedia error: ', err)
+            });
+    };
+    // Simulate a click every second
+    setInterval(clickButton, 500);
+
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='disp.css') }}">
+{% endblock %}
