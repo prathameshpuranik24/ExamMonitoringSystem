@@ -3,7 +3,7 @@
 WITHackathon-21(Software Edition)
 
 ORGANISED BY,
-COMPUTER SCIENCE AND ENGINEERING DEPARTMENT
+COMPUTER SCIENCE AND ENGINEERING DEPARTMENT,
 IN ASSOCIATION WITH COMPUTER SOCIETY OF INDIA.
 
 Problem Statement:-
@@ -21,3 +21,11 @@ docker pull proctoredexam/exam:v2
 
 Command to run our docker file:-
 docker run -t -p 5000:5000 -v /etc/localtime:/etc/localtime e360d3415ea9
+
+Developed By-
+#Team TechEureka
+Team Members:
+1) Prathamesh Puranik
+2) Abhishek Kanshetti
+3) Raj Jakapure
+4) Abhijit Joshi
